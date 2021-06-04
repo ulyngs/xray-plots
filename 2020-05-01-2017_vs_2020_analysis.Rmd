@@ -235,7 +235,24 @@ count_tracker_hosts %>%
   theme(legend.position="top") +
   labs(x = x, y = "Number of apps")
 
+
 ```
+
+### Create plot again for publication
+```{r}
+count_tracker_hosts %>%
+  filter(num_tracker_hosts < limit) %>%
+  ggplot(aes(num_tracker_hosts, fill = crawl)) +
+  #geom_density(position="identity", adjust = 3, alpha=0.5) +
+  geom_histogram(binwidth = 1, position="identity", alpha=0.7, size=1.2) +
+  theme_minimal() +
+  theme(legend.position="top") +
+  labs(x = x, y = "Number of apps") +
+  scale_y_continuous(labels = comma)
+
+ggsave("figures/tracker_hosts_per_app.png")
+```
+
 
 
 ## Most frequent hosts
@@ -392,6 +409,22 @@ gini_tracker_companies(count_tracker_companies)
 number_tracker_companies(count_tracker_companies)
 
 ```
+
+#### Recreate plot again for publication
+```{r}
+count_tracker_companies %>%
+  filter(num_companies < 20) %>%
+  ggplot(aes(num_companies, fill = crawl)) +
+  geom_histogram(binwidth = 1, position="identity", alpha=0.7, size=1.2) +
+  theme_minimal() +
+  theme(legend.position="top") +
+  labs(x = "Number of distinct companies per app", y = "Number of apps") +
+  scale_y_continuous(labels = comma)
+  
+ggsave("figures/distinct_companies_per_app.png")
+```
+
+
 
 ### Outliers (w/ more than 40 companies)
 ```{r}
@@ -562,3 +595,70 @@ count_tracker_companies %>%
 
 
 # TODO
+
+# Recreating the python plot
+## Prevalence plot
+```{r}
+prevalence_data <- read_csv("data/python_plot/prevalence.csv")
+
+# turn into a tidy dataset
+tidy_prevalence <- prevalence_data %>% 
+  rename(company = X1,
+         installs_2017 = min_installs,
+         installs_2020 = min_installs_1) %>% 
+  slice(3:n()) %>% 
+  pivot_longer(cols = c(installs_2017, installs_2020)) %>% 
+  rename(Year = name, ptc = value) %>% 
+  mutate(Year = str_remove(Year, "installs_"))
+
+# visualise
+prevalence_plot <- tidy_prevalence %>% 
+  ggplot() +
+    geom_col(aes(x = reorder(company, ptc), y = ptc, fill = Year), position = "dodge") +
+    coord_flip() +
+    theme_minimal() +
+    theme(
+      legend.position = c(.95, .35),
+      legend.justification = c("right", "top"),
+      legend.box.just = "right",
+      legend.margin = margin(6, 6, 6, 6),
+      legend.box.background = element_rect(color="lightgrey", size=0.3)
+    ) +
+    labs(x = "", y = "", title = "Prevalence (% of apps)")
+
+ggsave(plot = prevalence_plot, "figures/prevalence_plot.png", height = 5, width = 5)
+```
+
+
+## Prominence plot
+```{r}
+prominence_data <- read_csv("data/python_plot/prominence.csv")
+
+# turn into a tidy dataset
+tidy_prominence <- prominence_data %>% 
+  rename(company = X1,
+         installs_2017 = min_installs,
+         installs_2020 = min_installs_1) %>% 
+  slice(3:n()) %>% 
+  pivot_longer(cols = c(installs_2017, installs_2020)) %>% 
+  rename(Year = name, ptc = value) %>% 
+  mutate(Year = str_remove(Year, "installs_"))
+
+# visualise
+prominence_plot <- tidy_prominence %>% 
+  ggplot() +
+    geom_col(aes(x = reorder(company, ptc), y = ptc, fill = Year), position = "dodge") +
+    coord_flip() +
+    theme_minimal() +
+    theme(
+      legend.position = c(.95, .35),
+      legend.justification = c("right", "top"),
+      legend.box.just = "right",
+      legend.margin = margin(6, 6, 6, 6),
+      legend.box.background = element_rect(color="lightgrey", size=0.3)
+    ) +
+    labs(x = "", y = "", title = "Prominence (% of app installs)")
+
+ggsave(plot = prominence_plot, "figures/prominence_plot.png", height = 5, width = 5)
+```
+
