@@ -624,7 +624,8 @@ prevalence_plot <- tidy_prevalence %>%
       legend.justification = c("right", "top"),
       legend.box.just = "right",
       legend.margin = margin(6, 6, 6, 6),
-      legend.box.background = element_rect(color="lightgrey", size=0.3)
+      legend.box.background = element_rect(color="lightgrey", size=0.3),
+      text = element_text(size=12)
     ) +
     labs(x = "", y = "", title = "Prevalence (% of apps)")
 
@@ -659,7 +660,8 @@ prominence_plot <- tidy_prominence %>%
       legend.justification = c("right", "top"),
       legend.box.just = "right",
       legend.margin = margin(6, 6, 6, 6),
-      legend.box.background = element_rect(color="lightgrey", size=0.3)
+      legend.box.background = element_rect(color="lightgrey", size=0.3),
+      text = element_text(size=12)
     ) +
     labs(x = "", y = "", title = "Prominence (% of app installs)")
 
