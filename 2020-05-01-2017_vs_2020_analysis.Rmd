@@ -613,8 +613,10 @@ tidy_prevalence <- prevalence_data %>%
 
 # visualise
 prevalence_plot <- tidy_prevalence %>% 
+  group_by(company) %>% 
+  mutate(sorting = max(ptc)) %>% 
   ggplot() +
-    geom_col(aes(x = reorder(company, ptc), y = ptc, fill = Year), position = "dodge") +
+    geom_col(aes(x = reorder(company, sorting), y = ptc, fill = Year), position = "dodge") +
     coord_flip() +
     theme_minimal() +
     theme(
@@ -646,8 +648,10 @@ tidy_prominence <- prominence_data %>%
 
 # visualise
 prominence_plot <- tidy_prominence %>% 
+  group_by(company) %>% 
+  mutate(sorting = max(ptc)) %>% 
   ggplot() +
-    geom_col(aes(x = reorder(company, ptc), y = ptc, fill = Year), position = "dodge") +
+    geom_col(aes(x = reorder(company, sorting), y = ptc, fill = Year), position = "dodge") +
     coord_flip() +
     theme_minimal() +
     theme(
